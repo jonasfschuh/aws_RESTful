@@ -31,7 +31,7 @@ java {
 }
 
 bootJar {
-	archiveBaseName = 'aws_restful'
+	archiveBaseName.set("aws_restful")
 	version = '1.0.0'
 	archiveFileName = 'app.jar'
 }
@@ -43,7 +43,7 @@ task unpack(type: Copy) {
 }
 
 docker {
-	name "${project.group}/${bootJar.archiveBaseName}"
+	name "${project.group}/${bootJar.archiveBaseName.get()}"
 	tags '${bootJar.version}'
 	copySpec.from(tasks.unpack.outputs).into("dependency")
 	buildArgs(['DEPENDENCY': "dependency"])
