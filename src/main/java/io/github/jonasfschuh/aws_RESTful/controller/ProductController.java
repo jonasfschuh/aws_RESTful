@@ -33,7 +33,6 @@ public class ProductController {
     public ResponseEntity<Product> findById(@PathVariable Long id) {
         Optional<Product> optionalProduct = productRepository.findById(id);
         if (optionalProduct.isPresent()) {
-            ResponseEntity<Product> rp =
             return new ResponseEntity<Product>(optionalProduct.get(), HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
