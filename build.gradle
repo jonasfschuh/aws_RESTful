@@ -1,69 +1,50 @@
-buildscript {
-	ext {
-		springBootVersion = '3.3.3'
-	}
-	repositories {
-		mavenCentral()
-		maven{
-			url 'https://plugins.gradle.org/m2/'
-		}
-	}
-	dependencies {
-		classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
-		classpath("com.palantir.gradle.docker:gradle-docker:0.36.0")
-	}
-}
-
 plugins {
 	id 'java'
-	id 'org.springframework.boot' version '3.3.3'
-	id 'io.spring.dependency-management' version '1.1.6'
-	id 'com.palantir.docker' version "0.36.0"
+	id 'org.springframework.boot' version '3.2.0-SNAPSHOT'
+	id 'io.spring.dependency-management' version '1.1.3'
+	id 'com.palantir.docker' version '0.35.0'
 }
 
+//TODO - esse valor deve ser o mesmo do seu Docker Hub ID
 group = 'jonasschuh'
-version = '0.0.1-SNAPSHOT'
+//TODO - aqui é o lugar onde se configura a tag da imagem Docker a ser gerada
+version = '1.0.10'
 
 java {
-	toolchain {
-		languageVersion = JavaLanguageVersion.of(17)
-	}
-}
-
-bootJar {
-	archiveBaseName.set("aws_restful")
-	version = '1.0.1'
-	archiveFileName = 'app.jar'
-}
-
-task unpack(type: Copy) {
-	dependsOn bootJar
-	from(zipTree(tasks.bootJar.outputs.files.singleFile))
-	into("build/dependency")
-}
-
-docker {
-	name "${project.group}/${bootJar.archiveBaseName.get()}"
-	tags '${bootJar.version}'
-	copySpec.from(tasks.unpack.outputs).into("dependency")
-	buildArgs(['DEPENDENCY': "dependency"])
+	sourceCompatibility = '17'
 }
 
 repositories {
 	mavenCentral()
+	maven { url 'https://repo.spring.io/milestone' }
+	maven { url 'https://repo.spring.io/snapshot' }
 }
 
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'org.springframework.boot:spring-boot-starter-actuator'
-	implementation 'org.springframework.boot:spring-boot-starter-data-jpa:'
-	// https://mvnrepository.com/artifact/org.mariadb.jdbc/mariadb-java-client
-//	implementation group: 'org.mariadb.jdbc', name: 'mariadb-java-client', version: '3.4.1'
-	// https://mvnrepository.com/artifact/org.mariadb.jdbc/mariadb-java-client
-	implementation 'org.mariadb.jdbc:mariadb-java-client:3.4.1'
+
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+	implementation 'org.mariadb.jdbc:mariadb-java-client:3.2.0'
 
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
-	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+tasks.register('unpack', Copy) {
+	dependsOn bootJar
+	from(zipTree(tasks.bootJar.outputs.files.singleFile))
+	into("build/dependency")
+}
+
+
+//Já está preparado para gerar imagem no formato linux/amd64, inclusive em computadores com processadores ARM, como os novos Macbook.
+//A variável project.name deve ser configurada no arquivo settings.gradle
+docker {
+	name "${project.group}/${project.name}"
+	buildx true
+	platform 'linux/amd64'
+	copySpec.from(tasks.unpack.outputs).into('dependency')
+	buildArgs(['DEPENDENCY' : "dependency"])
 }
 
 tasks.named('test') {

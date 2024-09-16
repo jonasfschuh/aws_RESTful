@@ -2,44 +2,37 @@ package io.github.jonasfschuh.aws_RESTful.model;
 
 import jakarta.persistence.*;
 
+@Table(
+        uniqueConstraints = {
+                @UniqueConstraint(columnNames = {"code"})
+        }
+)
 @Entity
-@Table(uniqueConstraints = @UniqueConstraint(columnNames = "code"))
 public class Product {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-    @Column(nullable = false)
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private long id;
+
+    @Column(length = 32, nullable = false)
     private String name;
+
+    @Column(length = 24, nullable = false)
     private String model;
+
+    @Column(length = 8, nullable = false)
     private String code;
 
-    public String getCode() {
-        return code;
-    }
+    private float price;
 
-    public void setCode(String code) {
-        this.code = code;
-    }
+    @Column(length = 12, nullable = true)
+    private String color;
 
-    private double price;
-
-    public Product() {
-    }
-
-    public Product(Long id, String name, String model, String code, double price) {
-        this.id = id;
-        this.name = name;
-        this.model = model;
-        this.code = code;
-        this.price = price;
-    }
-
-    public Long getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(long id) {
         this.id = id;
     }
 
@@ -55,15 +48,31 @@ public class Product {
         return model;
     }
 
-    public void setModel(String description) {
-        this.model = description;
+    public void setModel(String model) {
+        this.model = model;
     }
 
-    public double getPrice() {
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
+    }
+
+    public float getPrice() {
         return price;
     }
 
-    public void setPrice(double price) {
+    public void setPrice(float price) {
         this.price = price;
+    }
+
+    public String getColor() {
+        return color;
+    }
+
+    public void setColor(String color) {
+        this.color = color;
     }
 }
