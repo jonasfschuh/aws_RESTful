@@ -27,7 +27,7 @@ public class SnsConfig {
                 .build();
     }
 
-    @Bean
+    @Bean(name = "productEventsTopic")
     public Topic snsProductEventsTopic() {
         return new Topic().withTopicArn(productEventsTopic);
     }
