@@ -5,5 +5,5 @@ pluginManagement {
         gradlePluginPortal()
     }
 }
-//TODO - esse valor deve ser o mesmo nome do seu repositório no Docker Hub
+// Docker repository
 rootProject.name = 'aws_restful'
