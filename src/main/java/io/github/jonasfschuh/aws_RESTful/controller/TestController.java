@@ -11,19 +11,26 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/test")
 public class TestController {
-
     private static final Logger LOG = LoggerFactory.getLogger(TestController.class);
 
     @GetMapping("/dog/{name}")
     public ResponseEntity<?> dogTest(@PathVariable String name) {
-        LOG.info("Dog test with name: {}", name);
-        return ResponseEntity.ok("Dog test with name: " + name);
+        LOG.info("Test controller - name: {}", name);
+
+        return ResponseEntity.ok("Name: " + name);
     }
 
-    @GetMapping("/cars/{name}")
-    public ResponseEntity<?> carTest(@PathVariable String name) {
-        LOG.info("The name of car is: {}", name);
-        return ResponseEntity.ok("The name of car is: " + name);
+    @GetMapping("/dog/color")
+    public ResponseEntity<?> dogColor() {
+        LOG.info("Test controller - Always black!");
+
+        return ResponseEntity.ok("Always black!");
     }
 
+    @GetMapping("/dog/color2")
+    public ResponseEntity<?> dogColor2() {
+        LOG.info("Test controller - Always black!");
+
+        return ResponseEntity.ok("Always black!");
+    }
 }

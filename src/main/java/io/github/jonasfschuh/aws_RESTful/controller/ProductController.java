@@ -4,7 +4,6 @@ import io.github.jonasfschuh.aws_RESTful.model.Product;
 import io.github.jonasfschuh.aws_RESTful.repository.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,56 +26,74 @@ public class ProductController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Product> findById(@PathVariable Long id) {
-        Optional<Product> optionalProduct = productRepository.findById(id);
-        if (optionalProduct.isPresent()) {
-            return new ResponseEntity<Product>(optionalProduct.get(), HttpStatus.OK);
+    public ResponseEntity<Product> findById(@PathVariable long id) {
+        Optional<Product> optProduct = productRepository.findById(id);
+        if (optProduct.isPresent()) {
+            return new ResponseEntity<Product>(optProduct.get(), HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
 
     @PostMapping
-    public ResponseEntity<Product> savePRoduct(@RequestBody Product product) {
-        productRepository.save(product);
-        return new ResponseEntity<Product>(product, HttpStatus.CREATED);
+    public ResponseEntity<Product> saveProduct(
+            @RequestBody Product product) {
+        Product productCreated = productRepository.save(product);
+
+        return new ResponseEntity<Product>(productCreated,
+                HttpStatus.CREATED);
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<Product> updateProduct(@PathVariable Long id, @RequestBody Product product) {
-        Optional<Product> optionalProduct = productRepository.findById(id);
-        if (optionalProduct.isPresent()) {
-            Product productToUpdate = optionalProduct.get();
-            productToUpdate.setCode(product.getCode());
-            productToUpdate.setModel(product.getModel());
-            productToUpdate.setPrice(product.getPrice());
-            productRepository.save(productToUpdate);
-            return new ResponseEntity<Product>(productToUpdate, HttpStatus.OK);
+    @PutMapping(path = "/{id}")
+    public ResponseEntity<Product> updateProduct(
+            @RequestBody Product product, @PathVariable("id") long id) {
+        if (productRepository.existsById(id)) {
+            product.setId(id);
+
+            Product productUpdated = productRepository.save(product);
+
+            return new ResponseEntity<Product>(productUpdated,
+                    HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Product> deleteProduct(@PathVariable Long id) {
-        Optional<Product> optionalProduct = productRepository.findById(id);
-        if (optionalProduct.isPresent()) {
-            productRepository.delete(optionalProduct.get());
-            return new ResponseEntity<>(HttpStatus.OK);
+    @DeleteMapping(path = "/{id}")
+    public ResponseEntity<Product> deleteProduct(@PathVariable("id") long id) {
+        Optional<Product> optProduct = productRepository.findById(id);
+        if (optProduct.isPresent()) {
+            Product product = optProduct.get();
+
+            productRepository.delete(product);
+
+            return new ResponseEntity<Product>(product, HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
 
-    @GetMapping("/code/{code}")
-    public ResponseEntity<Product> findByCode(@PathVariable String code) {
-        Optional<Product> optionalProduct = productRepository.findByCode(code);
-        if (optionalProduct.isPresent()) {
-            return new ResponseEntity<Product>(optionalProduct.get(), HttpStatus.OK);
+    @GetMapping(path = "/bycode")
+    public ResponseEntity<Product> findByCode(@RequestParam String code) {
+        Optional<Product> optProduct = productRepository.findByCode(code);
+        if (optProduct.isPresent()) {
+            return new ResponseEntity<Product>(optProduct.get(), HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 }
