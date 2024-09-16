@@ -8,7 +8,7 @@ plugins {
 // Docker Hub ID
 group = 'jonasschuh'
 // Image tag
-version = '1.0.11'
+version = '1.0.12'
 
 java {
 	sourceCompatibility = '17'

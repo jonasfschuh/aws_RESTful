@@ -16,7 +16,7 @@ import java.util.Optional;
 public class ProductController {
 
     private ProductRepository productRepository;
-    private final ProductPublisher productPublisher;
+    private ProductPublisher productPublisher;
 
     @Autowired
     public ProductController(ProductRepository productRepository, ProductPublisher productPublisher
