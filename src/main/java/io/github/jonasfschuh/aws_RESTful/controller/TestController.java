@@ -27,10 +27,10 @@ public class TestController {
         return ResponseEntity.ok("Always black!");
     }
 
-    @GetMapping("/dog/color2")
-    public ResponseEntity<?> dogColor2() {
-        LOG.info("Test controller - Always black!");
+    @GetMapping("/car/{name}")
+    public ResponseEntity<?> carName(@PathVariable String name) {
+        LOG.info("Test controller - name: {}", name);
 
-        return ResponseEntity.ok("Always black!");
+        return ResponseEntity.ok("Name: " + name);
     }
 }
