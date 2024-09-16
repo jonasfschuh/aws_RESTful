@@ -5,10 +5,10 @@ plugins {
 	id 'com.palantir.docker' version '0.35.0'
 }
 
-//TODO - esse valor deve ser o mesmo do seu Docker Hub ID
+// Docker Hub ID
 group = 'jonasschuh'
-//TODO - aqui é o lugar onde se configura a tag da imagem Docker a ser gerada
-version = '1.0.10'
+// Image tag
+version = '1.0.11'
 
 java {
 	sourceCompatibility = '17'
@@ -26,6 +26,8 @@ dependencies {
 
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	implementation 'org.mariadb.jdbc:mariadb-java-client:3.2.0'
+
+	implementation 'com.amazonaws:aws-java-sdk-sns:1.12.13'
 
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }
