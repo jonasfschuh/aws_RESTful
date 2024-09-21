@@ -1,6 +1,8 @@
 package io.github.jonasfschuh.aws_RESTful.controller;
 
+import com.amazonaws.HttpMethod;
 import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.model.GeneratePresignedUrlRequest;
 import io.github.jonasfschuh.aws_RESTful.model.UrlResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -12,6 +14,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.time.Duration;
 import java.time.Instant;
+import java.util.Date;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/invoices")
@@ -30,7 +34,13 @@ public class InvoiceController {
     @PostMapping
     public ResponseEntity<UrlResponse> createInvoiceUrl() {
         UrlResponse urlResponse = new UrlResponse();
-        Instant expiration = Instant.now().plus(Duration.ofMinutes(5));
+        Instant expirationTime = Instant.now().plus(Duration.ofMinutes(5));
+        String processId = UUID.randomUUID().toString();
+
+        GeneratePresignedUrlRequest generatePresignedUrlRequest =
+                new GeneratePresignedUrlRequest(bucketName, processId)
+                        .withMethod(HttpMethod.PUT)
+                        .withExpiration(Date.from(expirationTime));
 
         return new ResponseEntity<UrlResponse>(urlResponse, HttpStatus.OK);
     }
