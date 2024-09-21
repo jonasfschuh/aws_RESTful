@@ -4,7 +4,6 @@ import com.amazonaws.auth.DefaultAWSCredentialsProviderChain;
 import com.amazonaws.client.builder.AwsClientBuilder;
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.sns.AmazonSNS;
-import com.amazonaws.services.sns.AmazonSNSClient;
 import com.amazonaws.services.sns.model.Topic;
 import com.amazonaws.services.sns.util.Topics;
 import com.amazonaws.services.sqs.AmazonSQS;
@@ -18,12 +17,11 @@ import org.springframework.context.annotation.Profile;
 @Profile("local")
 public class SqsCreateSubscribe {
 
-    public SqsCreateSubscribe(AmazonSNS snsClient,
-                              @Qualifier("productEventsTopic") Topic productEventsTopic) {
+    public SqsCreateSubscribe(AmazonSNS snsClient, @Qualifier("productEventsTopic") Topic productEventsTopic) {
         AmazonSQS sqsClient = AmazonSQSClient.builder()
-                .withEndpointConfiguration(new AwsClientBuilder
-                        .EndpointConfiguration("http://localhost:4566",
-                        Regions.US_EAST_1.getName()))
+                .withEndpointConfiguration(
+                        new AwsClientBuilder.EndpointConfiguration("http://localhost:4566",
+                                Regions.US_EAST_1.getName()))
                 .withCredentials(new DefaultAWSCredentialsProviderChain())
                 .build();
 
@@ -31,7 +29,5 @@ public class SqsCreateSubscribe {
                 new CreateQueueRequest("product-events")).getQueueUrl();
 
         Topics.subscribeQueue(snsClient, sqsClient, productEventsTopic.getTopicArn(), productEventsQueueUrl);
-
     }
-
 }
