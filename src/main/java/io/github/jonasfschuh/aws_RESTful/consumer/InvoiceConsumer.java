@@ -2,6 +2,7 @@ package io.github.jonasfschuh.aws_RESTful.consumer;
 
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.event.S3EventNotification;
+import com.amazonaws.services.s3.model.S3Object;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.github.jonasfschuh.aws_RESTful.model.Invoice;
 import io.github.jonasfschuh.aws_RESTful.model.SnsMessage;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 import javax.jms.JMSException;
 import javax.jms.TextMessage;
+import java.io.BufferedReader;
 import java.io.IOException;
 
 @Service
@@ -70,8 +72,17 @@ public class InvoiceConsumer {
 
     }
 
-    private String downloadObject(String bucketName, String objectKey) {
+    private String downloadObject(String bucketName, String objectKey) throws IOException {
+        S3Object s3Object = amazonS3.getObject(bucketName, objectKey);
 
+        StringBuilder stringBuilder = new StringBuilder();
+        BufferedReader bufferedReader = new BufferedReader(
+                new java.io.InputStreamReader(s3Object.getObjectContent()));
+        String content = null;
+        while ((content = bufferedReader.readLine())  != null) {
+            stringBuilder.append(content);
+        }
+        return stringBuilder.toString();
     }
 
 
