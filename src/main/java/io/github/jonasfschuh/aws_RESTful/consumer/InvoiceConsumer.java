@@ -66,10 +66,7 @@ public class InvoiceConsumer {
             invoiceRepository.save(invoice);
 
             amazonS3.deleteObject(bucketName, objectKey);
-
         }
-
-
     }
 
     private String downloadObject(String bucketName, String objectKey) throws IOException {
