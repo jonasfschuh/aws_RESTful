@@ -63,6 +63,8 @@ public class InvoiceConsumer {
 
             invoiceRepository.save(invoice);
 
+            amazonS3.deleteObject(bucketName, objectKey);
+
         }
 
 
