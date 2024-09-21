@@ -3,14 +3,14 @@ package io.github.jonasfschuh.aws_RESTful.controller;
 import com.amazonaws.HttpMethod;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.GeneratePresignedUrlRequest;
+import io.github.jonasfschuh.aws_RESTful.model.Invoice;
 import io.github.jonasfschuh.aws_RESTful.model.UrlResponse;
+import io.github.jonasfschuh.aws_RESTful.repository.InvoiceRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.time.Duration;
 import java.time.Instant;
@@ -25,10 +25,12 @@ public class InvoiceController {
     private String bucketName;
 
     private AmazonS3 amazonS3;
+    private final InvoiceRepository invoiceRepository;
 
     @Autowired
-    public InvoiceController(AmazonS3 amazonS3) {
+    public InvoiceController(AmazonS3 amazonS3, InvoiceRepository invoiceRepository) {
         this.amazonS3 = amazonS3;
+        this.invoiceRepository = invoiceRepository;
     }
 
     @PostMapping
@@ -48,5 +50,17 @@ public class InvoiceController {
 
         return new ResponseEntity<UrlResponse>(urlResponse, HttpStatus.OK);
     }
+
+    @GetMapping
+    public Iterable<Invoice> findAll() {
+        return invoiceRepository.findAll();
+    }
+
+    @GetMapping(path = "/bycustomername")
+    public Iterable<Invoice> findAllByCustomerName(@RequestParam String customerName) {
+        return invoiceRepository.findAllByCustomerName(customerName);
+    }
+
+
 
 }
