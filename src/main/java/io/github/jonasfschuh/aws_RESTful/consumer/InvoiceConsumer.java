@@ -6,7 +6,12 @@ import io.github.jonasfschuh.aws_RESTful.repository.InvoiceRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jms.annotation.JmsListener;
 import org.springframework.stereotype.Service;
+
+import javax.jms.JMSException;
+import javax.jms.TextMessage;
+import java.io.IOException;
 
 @Service
 public class InvoiceConsumer {
@@ -24,7 +29,11 @@ public class InvoiceConsumer {
         this.invoiceRepository = invoiceRepository;
     }
 
+    @JmsListener(destination = "${aws.sqs.queue.invoice.events.name}")
+    public void receiveS3Event(TextMessage textMessage) throws JMSException, IOException {
 
+        log.info("Invoice event received - Message: {}", textMessage);
+    }
 
 
 }
