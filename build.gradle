@@ -28,6 +28,10 @@ dependencies {
 	implementation 'org.mariadb.jdbc:mariadb-java-client:3.2.0'
 
 	implementation 'com.amazonaws:aws-java-sdk-sns:1.12.13'
+	implementation 'com.amazonaws:aws-java-sdk-sqs:1.12.772'
+
+	// https://mvnrepository.com/artifact/com.amazonaws/aws-java-sdk-s3
+	implementation 'com.amazonaws:aws-java-sdk-s3:1.12.772'
 
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }
