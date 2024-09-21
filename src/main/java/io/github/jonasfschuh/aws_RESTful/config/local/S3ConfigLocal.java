@@ -7,10 +7,16 @@ import com.amazonaws.client.builder.AwsClientBuilder;
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
+import com.amazonaws.services.s3.model.BucketNotificationConfiguration;
+import com.amazonaws.services.s3.model.S3Event;
+import com.amazonaws.services.s3.model.TopicConfiguration;
 import com.amazonaws.services.sns.AmazonSNS;
 import com.amazonaws.services.sns.AmazonSNSClient;
+import com.amazonaws.services.sns.model.CreateTopicRequest;
+import com.amazonaws.services.sns.util.Topics;
 import com.amazonaws.services.sqs.AmazonSQS;
 import com.amazonaws.services.sqs.AmazonSQSClient;
+import com.amazonaws.services.sqs.model.CreateQueueRequest;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -39,8 +45,25 @@ public class S3ConfigLocal {
         configureBucket(s3InvoiceEventsTopicArn);
     }
 
+    private void configureBucket(String s3InvoiceEventsTopicArn) {
+        TopicConfiguration topicConfiguration = new TopicConfiguration();
+        topicConfiguration.setTopicARN(s3InvoiceEventsTopicArn);
+        topicConfiguration.addEvent(S3Event.ObjectCreatedByPut);
+
+        amazonS3.setBucketNotificationConfiguration(BUCKET_NAME,
+                new BucketNotificationConfiguration().addConfiguration("putObject", topicConfiguration));
+    }
+
+    private void createQueue(AmazonSNS snsClient, String s3InvoiceEventsTopicArn, AmazonSQS sqsClient) {
+        String productEventsQueueUrl = sqsClient.createQueue(
+                new CreateQueueRequest("s3-invoice-events")).getQueueUrl();
+
+        Topics.subscribeQueue(snsClient, sqsClient, s3InvoiceEventsTopicArn, productEventsQueueUrl);
+    }
+
     private String createTopic(AmazonSNS snsClient, String s) {
-        return snsClient.createTopic(s).getTopicArn();
+        CreateTopicRequest createTopicRequest = new CreateTopicRequest(s);
+        return snsClient.createTopic(createTopicRequest).getTopicArn();
     }
 
     private AmazonS3 getAmazonS3() {
