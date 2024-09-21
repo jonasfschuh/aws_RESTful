@@ -3,6 +3,7 @@ package io.github.jonasfschuh.aws_RESTful.consumer;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.event.S3EventNotification;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.github.jonasfschuh.aws_RESTful.model.Invoice;
 import io.github.jonasfschuh.aws_RESTful.model.SnsMessage;
 import io.github.jonasfschuh.aws_RESTful.repository.InvoiceRepository;
 import org.slf4j.Logger;
@@ -54,9 +55,17 @@ public class InvoiceConsumer {
             String bucketName = s3Entity.getBucket().getName();
             String objectKey = s3Entity.getObject().getKey();
 
+            String invoiceFile = downloadObject(bucketName, objectKey);
 
+            Invoice invoice = objectMapper.readValue(invoiceFile, Invoice.class);
+            log.info("Invoice received: {} - Customer Name: {}",
+                    invoice.getInvoiceNumber(), invoice.getCustomerName());
         }
 
+
+    }
+
+    private String downloadObject(String bucketName, String objectKey) {
 
     }
 
