@@ -42,6 +42,10 @@ public class InvoiceController {
                         .withMethod(HttpMethod.PUT)
                         .withExpiration(Date.from(expirationTime));
 
+        urlResponse.setExpirationTime(expirationTime.getEpochSecond());
+        urlResponse.setUrl(amazonS3.generatePresignedUrl(
+                generatePresignedUrlRequest).toString());
+
         return new ResponseEntity<UrlResponse>(urlResponse, HttpStatus.OK);
     }
 
