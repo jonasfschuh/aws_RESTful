@@ -60,6 +60,9 @@ public class InvoiceConsumer {
             Invoice invoice = objectMapper.readValue(invoiceFile, Invoice.class);
             log.info("Invoice received: {} - Customer Name: {}",
                     invoice.getInvoiceNumber(), invoice.getCustomerName());
+
+            invoiceRepository.save(invoice);
+
         }
 
 
